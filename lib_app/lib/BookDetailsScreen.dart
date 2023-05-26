@@ -25,33 +25,51 @@ class BookDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book.name),
+        leading: const BackButton(color: Colors.black,),
+        title: Text(book.name, style: const TextStyle(color: Colors.black),),
+        backgroundColor: Colors.white,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(
-              book.coverImagePath,
-              width: 300,
-              height: 600,
+      backgroundColor: const Color.fromARGB(255, 227, 226, 226),
+
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          Image.network(
+            book.coverImagePath,
+            alignment: Alignment.center,
+            width: 400,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Card(
+            color: Colors.white,
+            elevation: 2,
+      
+            child: SizedBox(
+              height: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                  'Author : ${book.author}\n\nLanguage : ${book.language}\n\nGenre : ${book.genre}\n\nDescription : ${book.description}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.start,
+                ),]
+              ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Author: ${book.author}\n\nDescription: ${book.description}',
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                String pdfUrl = book.pdfPath;
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          FloatingActionButton(onPressed: () async{
+              String pdfUrl = book.pdfPath;
                 openPDF(pdfUrl);
-              },
-              child: const Text('Open PDF'),
-            ),
-          ],
-        ),
+          },
+          shape: const BeveledRectangleBorder(borderRadius: BorderRadius.zero,),
+          backgroundColor: Colors.lightBlue,
+          child: const Text('Read Book'),),
+        ],
       ),
     );
   }

@@ -57,8 +57,8 @@ class _BooksListScreenState extends State<BooksListScreen> {
     // Disable certificate verification
     HttpOverrides.global = MyHttpOverrides();
 
-    final response =
-        await http.get(Uri.parse('https://library-backend-serv.onrender.com//books'));
+    final response = await http
+        .get(Uri.parse('https://library-backend-serv.onrender.com//books'));
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       setState(() {
@@ -177,7 +177,46 @@ class _BooksListScreenState extends State<BooksListScreen> {
             ListTile(
               title: const Text('Categories'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context, 'ok');
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        scrollable: true,
+                        title: const Text('Select genre'),
+                        content: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    selectedGenre = 'All';
+                                  },
+                                  
+                                  child: const Text('All'),),
+                              TextButton(
+                                  onPressed: () {
+                                    selectedGenre = 'Fiction';
+                                  },
+                                  child: const Text('Fiction'),),
+                              TextButton(
+                                  onPressed: () {
+                                    selectedGenre = 'Non Fiction';
+                                  },
+                                  child: const Text('Non Fiction')),
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                filterBooksByGenre(selectedGenre);
+                                Navigator.pop(context, 'ok');
+                              },
+                              child: const Text('Ok'))
+                        ],
+                      );
+                    });
               },
             ),
             ListTile(
