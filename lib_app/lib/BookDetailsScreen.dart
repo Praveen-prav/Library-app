@@ -45,11 +45,7 @@ class BookDetailsScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-                String fileName = book.pdfPath.replaceAll(
-                    'https://192.168.29.19:51000/static/assets/pdfs/', '');
-                print(fileName);
-                String pdfUrl =
-                    'https://praveen-prav.github.io/backend_lib/static/assets/pdfs/$fileName';
+                String pdfUrl = book.pdfPath;
                 openPDF(pdfUrl);
               },
               child: const Text('Open PDF'),
