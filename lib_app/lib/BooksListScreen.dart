@@ -36,6 +36,8 @@ class BooksListScreen extends StatefulWidget {
 }
 
 class _BooksListScreenState extends State<BooksListScreen> {
+  late bool _backgroundColor;
+  // int DarkTextColor = Colors.black as int;
   List<Book> books = [];
   List<Book> filteredBooks = [];
   String? selectedLanguage = 'All';
@@ -51,6 +53,7 @@ class _BooksListScreenState extends State<BooksListScreen> {
   void initState() {
     super.initState();
     fetchBooks();
+    _backgroundColor = false;
   }
 
   void fetchBooks() async {
@@ -120,7 +123,23 @@ class _BooksListScreenState extends State<BooksListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        title: TextField(
+          onChanged: searchBooks,
+          style: _backgroundColor ? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black),
+          decoration:
+          _backgroundColor ? const InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Search by Title or Author',
+            hintStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.search, color: Colors.white,),
+          ) : const InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Search by Title or Author',
+            hintStyle: TextStyle(color: Colors.black),
+            prefixIcon: Icon(Icons.search, color: Colors.black),
+          )
+        ),
+        backgroundColor: _backgroundColor ? Colors.black : Colors.white,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -128,42 +147,13 @@ class _BooksListScreenState extends State<BooksListScreen> {
                 Scaffold.of(context).openDrawer();
               },
               icon: const Icon(Icons.menu),
-              color: Colors.black,
+              color: _backgroundColor ? Colors.white : Colors.black,
             );
           },
         ),
-        actions: [
-          // Language filter dropdown menu
-          DropdownButton<String>(
-            value: selectedLanguage,
-            items: const [
-              DropdownMenuItem(
-                value: 'All',
-                child: Text('All Languages'),
-              ),
-              DropdownMenuItem(
-                value: 'English',
-                child: Text('English'),
-              ),
-              DropdownMenuItem(
-                value: 'Hindi',
-                child: Text('Hindi'),
-              ),
-              DropdownMenuItem(
-                value: 'Telugu',
-                child: Text('Telugu'),
-              ),
-              DropdownMenuItem(
-                value: 'Tamil',
-                child: Text('Tamil'),
-              ),
-              // Add more language options here
-            ],
-            onChanged: filterBooksByLanguage,
-          ),
-        ],
       ),
       drawer: Drawer(
+        backgroundColor: _backgroundColor? const Color.fromARGB(255, 52, 51, 51) : Colors.white,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -171,152 +161,356 @@ class _BooksListScreenState extends State<BooksListScreen> {
               decoration: BoxDecoration(color: Color.fromARGB(255, 14, 39, 59)),
               child: Text(
                 'Menu',
-                style: TextStyle(fontSize: 24, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
             ListTile(
-              title: const Text('Categories'),
+              title: Text('Categories', style: _backgroundColor? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black)),
               onTap: () {
                 Navigator.pop(context, 'ok');
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
+                        backgroundColor: _backgroundColor? const Color.fromARGB(255, 52, 51, 51) : Colors.white,
                         scrollable: true,
-                        title: const Text('Select genre'),
+                        title: _backgroundColor? const Text('Select genre',style: TextStyle(color: Colors.white),) : const Text('Select genre',style: TextStyle(color: Colors.black),),
                         content: Padding(
                           padding: const EdgeInsets.all(8),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              TextButton(
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
+                                ),
+                                child: TextButton(
                                   onPressed: () {
+                                    Navigator.pop(context);
                                     selectedGenre = 'All';
+                                    filterBooksByGenre(selectedGenre);
                                   },
-                                  
-                                  child: const Text('All'),),
-                              TextButton(
+                                  child: const Text(
+                                    'All',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
+                                ),
+                                child: TextButton(
                                   onPressed: () {
+                                    Navigator.pop(context);
                                     selectedGenre = 'Fiction';
+                                    filterBooksByGenre(selectedGenre);
                                   },
-                                  child: const Text('Fiction'),),
-                              TextButton(
-                                  onPressed: () {
-                                    selectedGenre = 'Non Fiction';
-                                  },
-                                  child: const Text('Non Fiction')),
+                                  child: const Text(
+                                    'Fiction',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
+                                ),
+                                child: TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      selectedGenre = 'Non Fiction';
+                                      filterBooksByGenre(selectedGenre);
+                                    },
+                                    child: const Text(
+                                      'Non Fiction',
+                                      style: TextStyle(color: Colors.white),
+                                    )),
+                              ),
                             ],
                           ),
                         ),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                filterBooksByGenre(selectedGenre);
-                                Navigator.pop(context, 'ok');
-                              },
-                              child: const Text('Ok'))
-                        ],
                       );
                     });
               },
             ),
+            _backgroundColor? const Divider(thickness : 1, color: Colors.white, height: 0.5,): const Divider(thickness : 1, color: Colors.black, height: 0.5,),
+            //..............................................................................................
             ListTile(
-              title: const Text('Settings'),
+              title: Text('Language', style: _backgroundColor? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black)),
               onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Contacts'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              onChanged: searchBooks,
-              decoration: const InputDecoration(
-                labelText: 'Search by title or author',
-                prefixIcon: Icon(Icons.search),
-              ),
-            ),
-          ),
-
-          // Book list
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-              ),
-              itemCount: filteredBooks.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            BookDetailsScreen(book: filteredBooks[index]),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Book cover image
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  filteredBooks[index].coverImagePath,
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
+                Navigator.pop(context, 'ok');
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: _backgroundColor? const Color.fromARGB(255, 52, 51, 51) : Colors.white,
+                        scrollable: true,
+                        title: _backgroundColor? const Text('Select Language', style: TextStyle(color: Colors.white),) : const Text('Select Language', style: TextStyle(color: Colors.black),),
+                        content: Padding(
+                          padding: const EdgeInsets.all(8),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              // Book title
-                              Text(
-                                filteredBooks[index].name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
+                                ),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    selectedLanguage = 'All';
+                                    filterBooksByLanguage(selectedLanguage);
+                                  },
+                                  child: const Text(
+                                    'All',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              // Book author
-                              Text(
-                                'By ${filteredBooks[index].author}',
-                                style: const TextStyle(
-                                  color: Colors.grey,
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
                                 ),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    selectedLanguage = 'English';
+                                    filterBooksByLanguage(selectedLanguage);
+                                  },
+                                  child: const Text(
+                                    'English',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
+                                ),
+                                child: TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      selectedLanguage = 'Telugu';
+                                      filterBooksByLanguage(selectedLanguage);
+                                    },
+                                    child: const Text(
+                                      'Telugu',
+                                      style: TextStyle(color: Colors.white),
+                                    )),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
+                                ),
+                                child: TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      selectedLanguage = 'Tamil';
+                                      filterBooksByLanguage(selectedLanguage);
+                                    },
+                                    child: const Text(
+                                      'Tamil',
+                                      style: TextStyle(color: Colors.white),
+                                    )),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.lightBlue,
+                                ),
+                                child: TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      selectedLanguage = 'Hindi';
+                                      filterBooksByLanguage(selectedLanguage);
+                                    },
+                                    child: const Text(
+                                      'Hindi',
+                                      style: TextStyle(color: Colors.white),
+                                    )),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
+                      );
+                    });
               },
             ),
-          ),
-        ],
+            _backgroundColor? const Divider(thickness : 1, color: Colors.white, height: 0.5,): const Divider(thickness : 1, color: Colors.black, height: 0.5,),
+            //........................................................................................................................
+            ListTile(
+              title: Text('Dark mode', style: _backgroundColor? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black)),
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor: _backgroundColor? const Color.fromARGB(255, 52, 51, 51) : Colors.white,
+                        content: Row(
+                          children: [
+                            _backgroundColor? const Text('Enable Dark mode', style: TextStyle(color: Colors.white),) : const Text('Enable Dark mode', style: TextStyle(color: Colors.black),),
+                            Switch(
+                                activeColor: Colors.lightBlue,
+                                activeTrackColor: const Color.fromARGB(255, 231, 233, 234),
+                                inactiveThumbColor: Colors.blueGrey.shade600,
+                                inactiveTrackColor: Colors.grey.shade400,
+                                splashRadius: 50.0,
+                                value: _backgroundColor,
+                                onChanged: (value) => setState(() {
+                                      Navigator.pop(context);
+                                      _backgroundColor = value;
+                                    }))
+                          ],
+                        ),
+                      );
+                    });
+              },
+            ),
+            _backgroundColor? const Divider(thickness : 1, color: Colors.white, height: 0.5,): const Divider(thickness : 1, color: Colors.black, height: 0.5,),
+            ListTile(
+              title: Text('Contact', style: _backgroundColor? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            _backgroundColor? const Divider(thickness : 1, color: Colors.white, height: 0.5,): const Divider(thickness : 1, color: Colors.black, height: 0.5,),
+          ],
+        ),
+      ),
+      body: Container(
+        color: _backgroundColor ? Colors.black : Colors.white,
+        child: Column(
+          children: [
+            // Book list
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                ),
+                itemCount: filteredBooks.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookDetailsScreen(
+                              book: filteredBooks[index],
+                              bgColor: _backgroundColor),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 2,
+                      color: _backgroundColor
+                          ? const Color.fromARGB(255, 52, 51, 51)
+                          : Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Book cover image
+                          Expanded(
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    filteredBooks[index].coverImagePath,
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                                _backgroundColor ? 
+                                // Book title
+                                Text(
+                                  filteredBooks[index].name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ) : Text(
+                                  filteredBooks[index].name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                // Book author
+                                Text(
+                                  'By ${filteredBooks[index].author}',
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

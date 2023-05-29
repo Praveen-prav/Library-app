@@ -6,8 +6,9 @@ import 'BooksListScreen.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   final Book book;
+  final bool bgColor;
 
-  const BookDetailsScreen({super.key, required this.book});
+  const BookDetailsScreen({super.key, required this.book, required this.bgColor});
 
   void openPDF(String pdfUrl) async {
     // Generate a Google Drive URL for the PDF file
@@ -15,6 +16,7 @@ class BookDetailsScreen extends StatelessWidget {
         'https://drive.google.com/viewerng/viewer?embedded=true&url=$pdfUrl';
 
     if (await canLaunchUrlString(driveUrl)) {
+      // sleep(const Duration(seconds: 2));
       await launchUrlString(driveUrl);
     } else {
       throw 'Could not launch $driveUrl';
@@ -25,12 +27,18 @@ class BookDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(color: Colors.black,),
-        title: Text(book.name, style: const TextStyle(color: Colors.black),),
-        backgroundColor: Colors.white,
+        leading:bgColor? const BackButton(
+          color: Colors.white,
+        ) : const BackButton(
+          color: Colors.black,
+        ),
+        title: Text(
+          book.name,
+          style:bgColor? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black),
+        ),
+        backgroundColor: bgColor ? Colors.black : Colors.white,
       ),
-      backgroundColor: const Color.fromARGB(255, 227, 226, 226),
-
+      backgroundColor: bgColor ? Colors.black : Colors.white,
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -43,32 +51,37 @@ class BookDetailsScreen extends StatelessWidget {
             height: 20,
           ),
           Card(
-            color: Colors.white,
+            color: bgColor?const Color.fromARGB(255, 52, 51, 51): Colors.white,
             elevation: 2,
-      
             child: SizedBox(
               height: 200,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                  'Author : ${book.author}\n\nLanguage : ${book.language}\n\nGenre : ${book.genre}\n\nDescription : ${book.description}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.start,
-                ),]
-              ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Author : ${book.author}\n\nLanguage : ${book.language}\n\nGenre : ${book.genre}\n\nDescription : ${book.description}',
+                      style: bgColor? const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white): const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                      textAlign: TextAlign.start,
+                    ),
+                  ]),
             ),
           ),
           const SizedBox(
             height: 15,
           ),
-          FloatingActionButton(onPressed: () async{
-              String pdfUrl = book.pdfPath;
+          
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
+            color: Colors.lightBlue),
+            width: 50,
+            child: TextButton(onPressed: () async {
+                String pdfUrl = book.pdfPath;
                 openPDF(pdfUrl);
-          },
-          shape: const BeveledRectangleBorder(borderRadius: BorderRadius.zero,),
-          backgroundColor: Colors.lightBlue,
-          child: const Text('Read Book'),),
+              },
+              child: const Text('Read Book', style: TextStyle(color: Colors.white)),),
+          )
         ],
       ),
     );
